@@ -18,12 +18,14 @@ Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")
-async def main_page():
+def main_page():
     return {}
 
 
-@app.post("/quiz/", response_model=QuestionBase)
-async def create_quiz(quiz_request: RequestBase, db: db_dependency):
+@app.post("/quiz/", response_model=List[QuestionBase])
+def create_quiz(
+    quiz_request: RequestBase, db: db_dependency
+) -> List[QuestionBase]:
     questions: List[QuestionBase] = []
     while len(questions) < quiz_request.questions_num:
         response = requests.get("https://jservice.io/api/random?count=1")
@@ -31,12 +33,12 @@ async def create_quiz(quiz_request: RequestBase, db: db_dependency):
             data = response.json()
             question_data = data[0]
             question = create_question(question_data)
-            existing_question = await check_existing_question(question, db)
+            existing_question = check_existing_question(question, db)
             if not existing_question:
-                await save_question(db, question)
+                save_question(db, question)
                 questions.append(question)
         else:
             raise HTTPException(
                 status_code=response.status_code, detail="Something wrong"
             )
-    return questions[-1]
+    return questions

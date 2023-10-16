@@ -22,8 +22,11 @@ Before doing something, make sure that you have
 ___
 
 POST http://localhost:8000/quiz
+
 Content-Type: application/json
 
 {
+
   "questions_num": 5
+
 }

@@ -14,7 +14,7 @@ def create_question(question_data: dict) -> models.Question:
     return question
 
 
-async def check_existing_question(
+def check_existing_question(
     question: schemas.QuestionBase, db: Session
 ) -> models.Question | None:
     existing_question = (
@@ -25,7 +25,7 @@ async def check_existing_question(
     return existing_question
 
 
-async def save_question(db: Session, question: schemas.QuestionBase):
+def save_question(db: Session, question: schemas.QuestionBase):
     db.add(question)
     db.commit()
     db.refresh(question)
