@@ -1,0 +1,13 @@
+__pycache__
+.DS_Store
+.env
+.idea
+.mypy_cache
+.py[cod]
+.venv
+*.bak
+*.swp
+*~
+venv
+postgresql/db
+.flake8

@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+
+  db:
+    build:
+      context: postgresql/
+    container_name: quiz_db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: ${DB_USER}
+    image: quiz_db:latest
+    init: true
+    ports:
+      - "5432:5432"
+    networks:
+      - back_net
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  webapp:
+    build:
+      context: .
+    container_name: quiz_app
+    env_file:
+      - .env
+    image: quiz_app:latest
+    init: true
+    networks:
+      - back_net
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+networks:
+  back_net:
+    name: quiz_app.local
+    driver: bridge
+
+volumes:
+  postgres_data:
