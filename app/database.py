@@ -1,12 +1,13 @@
-from typing import Annotated, AsyncGenerator
+from typing import Annotated
+from typing import AsyncGenerator
 
 from fastapi import Depends
 from sqlalchemy import engine as eng
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.asyncio import async_sessionmaker
+
 from app.config_data.config import load_config
 from app.config_data.dirs import DIR_REPO
 
@@ -21,7 +22,9 @@ db_url = eng.URL.create(
 )
 
 engine = create_async_engine(db_url)
-async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+async_session = async_sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False
+)
 
 
 Base = declarative_base()

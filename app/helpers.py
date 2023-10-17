@@ -38,7 +38,5 @@ async def save_question(db: AsyncSession, question: schemas.QuestionBase):
 
 
 async def get_question(client: AsyncClient, url: str):
-    async with client as client:
-        response = await client.get(url)
+    response = await client.get(url)
     return response
-
