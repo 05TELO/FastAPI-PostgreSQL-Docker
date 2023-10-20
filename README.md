@@ -1,5 +1,10 @@
 # Quiz app
 
+
+* FastAPI app 
+* PostgreSQL integration using SQLAlchemy
+* Dockerfile and docker-compose integations
+
 ---
 
 ## Usage
