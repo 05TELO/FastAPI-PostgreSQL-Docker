@@ -1,11 +1,12 @@
 from typing import Annotated
+from typing import AsyncGenerator
 
 from fastapi import Depends
-from sqlalchemy import create_engine
 from sqlalchemy import engine as eng
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import async_sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session
-from sqlalchemy.orm import sessionmaker
 
 from app.config_data.config import load_config
 from app.config_data.dirs import DIR_REPO
@@ -20,18 +21,18 @@ db_url = eng.URL.create(
     database=conf.postgresql.db,
 )
 
-engine = create_engine(db_url)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_async_engine(db_url)
+async_session = async_sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False
+)
+
 
 Base = declarative_base()
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+async def get_session() -> AsyncGenerator:
+    async with async_session() as session:
+        yield session
 
 
-db_dependency = Annotated[Session, Depends(get_db)]
+db_dependency = Annotated[AsyncSession, Depends(get_session)]
